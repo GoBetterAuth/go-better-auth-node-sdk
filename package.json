@@ -1,0 +1,50 @@
+{
+  "name": "go-better-auth",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Official SDK for GoBetterAuth.",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/GoBetterAuth/go-better-auth-node-sdk#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GoBetterAuth/go-better-auth-node-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/GoBetterAuth/go-better-auth-node-sdk/issues"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    },
+    "./plugins": {
+      "require": "./dist/plugins/index.cjs",
+      "import": "./dist/plugins/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "prepublishOnly": "pnpm run build"
+  },
+  "dependencies": {
+    "cookie": "^1.1.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.0.10",
+    "bumpp": "^10.4.0",
+    "tsdown": "^0.20.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
+  }
+}

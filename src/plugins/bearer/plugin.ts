@@ -1,0 +1,76 @@
+import type { FetchContext, Plugin } from "@/types";
+import type { BearerPluginOptions } from "./types";
+import type { JWTPlugin } from "../jwt/plugin";
+import type { ClientWithPlugins } from "@/sdk";
+
+export class BearerPlugin implements Plugin {
+  public readonly id = "bearer";
+  private refreshPromise: Promise<any> | null = null;
+
+  constructor(private readonly options?: BearerPluginOptions) {}
+
+  public init(client: ClientWithPlugins<[JWTPlugin]>) {
+    client.registerBeforeFetch(async (ctx: FetchContext) => {
+      if (typeof document === "undefined") {
+        return;
+      }
+
+      const headerName = this.options?.headerName ?? "Authorization";
+      const token = localStorage.getItem("accessToken");
+      if (token) {
+        ctx.init.headers = {
+          ...ctx.init.headers,
+          [headerName]: `Bearer ${token}`,
+        };
+      }
+    });
+
+    client.registerAfterFetch(async (ctx: FetchContext, res: Response) => {
+      if (typeof document === "undefined") return;
+      if (res.status !== 401) return;
+      if (ctx.meta.retry) return;
+
+      const refreshToken = localStorage.getItem("refreshToken");
+      if (!refreshToken) return;
+
+      if (!client.jwt) {
+        console.warn("JWT Plugin is required for Bearer token refresh.");
+        return;
+      }
+
+      // 🔒 SINGLE FLIGHT REFRESH
+      if (!this.refreshPromise) {
+        this.refreshPromise = (async () => {
+          try {
+            const response = await client.jwt.refreshToken({
+              refresh_token: refreshToken,
+            });
+
+            if (!response) return null;
+
+            localStorage.setItem("accessToken", response.access_token);
+            localStorage.setItem("refreshToken", response.refresh_token);
+
+            return response;
+          } finally {
+            this.refreshPromise = null;
+          }
+        })();
+      }
+
+      const refreshed = await this.refreshPromise;
+      if (!refreshed) return;
+
+      const headerName = this.options?.headerName ?? "Authorization";
+      ctx.init.headers = {
+        ...ctx.init.headers,
+        [headerName]: `Bearer ${refreshed.access_token}`,
+      };
+
+      ctx.meta.retry = true;
+      return "retry";
+    });
+
+    return {};
+  }
+}
