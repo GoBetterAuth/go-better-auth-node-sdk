@@ -1,6 +1,16 @@
-# GoBetterAuth Node.js SDK
+<p align="center">
+GoBetterAuth Node.js SDK
+</p>
 
-Official GoBetterAuth SDK. This SDK provides seamless integration with GoBetterAuth authentication server for both client-side and server-side applications and is framework agnostic (React, Vue.js and more).
+<p align="center">
+<img src="./project-logo.png" width="100" />
+</p>
+
+<p align="center">
+Official GoBetterAuth Node.js SDK. This SDK provides seamless integration with GoBetterAuth authentication server for both client-side and server-side applications and is framework agnostic (React, Vue.js and more).
+</p>
+
+---
 
 ## Features
 
@@ -33,9 +43,7 @@ import { EmailPasswordPlugin } from "go-better-auth/plugins";
 // Create a client instance
 const goBetterAuthClient = createClient({
   url: "http://localhost:8080", // Your GoBetterAuth server URL
-  plugins: [
-    new EmailPasswordPlugin()
-  ]
+  plugins: [new EmailPasswordPlugin()],
 });
 
 // Now you can use the client to perform authentication operations
@@ -58,9 +66,9 @@ const goBetterAuthClient = createClient({
     new EmailPasswordPlugin(),
     new CSRFPlugin({
       cookieName: "csrf_token",
-      headerName: "X-CSRF-TOKEN"
-    })
-  ]
+      headerName: "X-CSRF-TOKEN",
+    }),
+  ],
 });
 ```
 
@@ -75,38 +83,36 @@ import { EmailPasswordPlugin } from "go-better-auth/plugins";
 
 const goBetterAuthClient = createClient({
   url: "http://localhost:8080",
-  plugins: [
-    new EmailPasswordPlugin()
-  ]
+  plugins: [new EmailPasswordPlugin()],
 });
 
 // Sign up
 await goBetterAuthClient.emailPassword.signUp({
   name: "John Doe",
   email: "john@example.com",
-  password: "securePassword123"
+  password: "securePassword123",
 });
 
 // Sign in
 const response = await goBetterAuthClient.emailPassword.signIn({
   email: "john@example.com",
-  password: "securePassword123"
+  password: "securePassword123",
 });
 
 // Send email verification
 await goBetterAuthClient.emailPassword.sendEmailVerification({
-  email: "john@example.com"
+  email: "john@example.com",
 });
 
 // Request password reset
 await goBetterAuthClient.emailPassword.requestPasswordReset({
-  email: "john@example.com"
+  email: "john@example.com",
 });
 
 // Change password
 await goBetterAuthClient.emailPassword.changePassword({
   token: "reset-token",
-  password: "newSecurePassword123"
+  password: "newSecurePassword123",
 });
 ```
 
@@ -119,15 +125,13 @@ import { OAuth2Plugin } from "go-better-auth/plugins";
 
 const goBetterAuthClient = createClient({
   url: "http://localhost:8080/auth",
-  plugins: [
-    new OAuth2Plugin()
-  ]
+  plugins: [new OAuth2Plugin()],
 });
 
 // Redirect user to OAuth2 provider
 const response = await goBetterAuthClient.oauth2.signIn({
   provider: "google", // or "github", "discord"
-  redirect_to: "http://localhost:3000/callback"
+  redirect_to: "http://localhost:3000/callback",
 });
 
 // Redirect user to the authUrl
@@ -164,14 +168,12 @@ import { JWTPlugin } from "go-better-auth/plugins";
 
 const goBetterAuthClient = createClient({
   url: "http://localhost:8080/auth",
-  plugins: [
-    new JWTPlugin()
-  ]
+  plugins: [new JWTPlugin()],
 });
 
 // Refresh JWT tokens
 const tokens = await goBetterAuthClient.jwt.refreshToken({
-  refresh_token: "your-refresh-token"
+  refresh_token: "your-refresh-token",
 });
 
 // Get JWKS keys
@@ -190,9 +192,9 @@ const goBetterAuthClient = createClient({
   plugins: [
     new JWTPlugin(),
     new BearerPlugin({
-      headerName: "Authorization" // Can be omitted as default is Authorization
-    })
-  ]
+      headerName: "Authorization", // Can be omitted as default is Authorization
+    }),
+  ],
 });
 
 // The Bearer plugin will automatically:
@@ -211,11 +213,11 @@ Configure fetch behavior with timeout and other options:
 const goBetterAuthClient = createClient({
   url: "http://localhost:8080/auth",
   fetchOptions: {
-    abortTimeout: 30 // Timeout in seconds
+    abortTimeout: 30, // Timeout in seconds
   },
   plugins: [
     // your plugins
-  ]
+  ],
 });
 ```
 
@@ -226,9 +228,7 @@ Add custom before/after fetch hooks for advanced customization:
 ```typescript
 const goBetterAuthClient = createClient({
   url: "http://localhost:8080/auth",
-  plugins: [
-    new EmailPasswordPlugin()
-  ]
+  plugins: [new EmailPasswordPlugin()],
 });
 
 // Register a before fetch hook
@@ -237,7 +237,7 @@ goBetterAuthClient.registerBeforeFetch(async (ctx) => {
   // Modify context if needed
   ctx.init.headers = {
     ...ctx.init.headers,
-    "X-Custom-Header": "value"
+    "X-Custom-Header": "value",
   };
 });
 
@@ -261,10 +261,10 @@ goBetterAuthClient.registerAfterFetch(async (ctx, response) => {
   // Optional fetch configuration
   fetchOptions?: {
     // Request timeout in seconds
-    abortTimeout?: number 
+    abortTimeout?: number
   },
   // Cookie provider for SSR compatibility
-  cookies?: () => CookieStore 
+  cookies?: () => CookieStore
 }
 ```
 
@@ -276,27 +276,27 @@ Once plugins are initialized, they expose methods on the client:
 
 `EmailPassword Plugin`:
 
-| Method                                      | Description                  |
-|---------------------------------------------|------------------------------|
-| `client.emailPassword.signUp(data)`         | Create a new user account    |
-| `client.emailPassword.signIn(data)`         | Authenticate a user          |
-| `client.emailPassword.sendEmailVerification(data)` | Send email verification      |
-| `client.emailPassword.requestPasswordReset(data)` | Request password reset       |
-| `client.emailPassword.changePassword(data)` | Change user password         |
-| `client.emailPassword.requestEmailChange(data)` | Request email change         |
+| Method                                             | Description               |
+| -------------------------------------------------- | ------------------------- |
+| `client.emailPassword.signUp(data)`                | Create a new user account |
+| `client.emailPassword.signIn(data)`                | Authenticate a user       |
+| `client.emailPassword.sendEmailVerification(data)` | Send email verification   |
+| `client.emailPassword.requestPasswordReset(data)`  | Request password reset    |
+| `client.emailPassword.changePassword(data)`        | Change user password      |
+| `client.emailPassword.requestEmailChange(data)`    | Request email change      |
 
 `OAuth2 Plugin`:
 
-| Method                                      | Description                  |
-|---------------------------------------------|------------------------------|
-| `client.oauth2.signIn(data)`                | Initiate OAuth2 flow         |
+| Method                       | Description          |
+| ---------------------------- | -------------------- |
+| `client.oauth2.signIn(data)` | Initiate OAuth2 flow |
 
 `JWT Plugin`:
 
-| Method                                      | Description                  |
-|---------------------------------------------|------------------------------|
-| `client.jwt.refreshToken(data)`             | Refresh JWT tokens           |
-| `client.jwt.getJWKSKeys()`                  | Get JWKS keys                |
+| Method                          | Description        |
+| ------------------------------- | ------------------ |
+| `client.jwt.refreshToken(data)` | Refresh JWT tokens |
+| `client.jwt.getJWKSKeys()`      | Get JWKS keys      |
 
 ## Error Handling
 
@@ -306,7 +306,7 @@ All methods return promises that can be caught for error handling:
 try {
   const response = await goBetterAuthClient.emailPassword.signIn({
     email: "user@example.com",
-    password: "password"
+    password: "password",
   });
   console.log("Signed in successfully", response);
 } catch (error) {
