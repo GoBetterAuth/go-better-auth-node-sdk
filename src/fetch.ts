@@ -1,3 +1,5 @@
+import { toCamelCaseKeys, toSnakeCaseKeys } from "es-toolkit";
+
 import type { GoBetterAuthClient } from "./client";
 import type { CookieStore, FetchContext, FetchRequestOptions } from "./types";
 
@@ -35,7 +37,9 @@ export async function wrappedFetch<T>(
     init: {
       method: options.method ?? "GET",
       headers,
-      body: options.body ? JSON.stringify(options.body) : undefined,
+      body: options.body
+        ? JSON.stringify(toSnakeCaseKeys(options.body))
+        : undefined,
       credentials: "include",
       signal: controller.signal,
     },
@@ -61,7 +65,7 @@ export async function wrappedFetch<T>(
     throw new Error(await res.text());
   }
 
-  const data = await res.json();
+  const resData = await res.json();
 
   // Apply Set-Cookie back into Next.js store (SSR only)
   if (cookieStore && setCookieHeaders) {
@@ -102,5 +106,5 @@ export async function wrappedFetch<T>(
     }
   }
 
-  return data as T;
+  return toCamelCaseKeys(resData) as T;
 }

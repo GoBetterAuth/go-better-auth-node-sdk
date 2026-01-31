@@ -1,10 +1,10 @@
 export type TokenRefreshRequest = {
-  refresh_token: string;
+  refreshToken: string;
 };
 
 export type TokenRefreshResponse = {
-  access_token: string;
-  refresh_token: string;
+  accessToken: string;
+  refreshToken: string;
 };
 
 export type JWTAlgorithm =

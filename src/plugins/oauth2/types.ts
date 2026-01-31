@@ -9,9 +9,9 @@ export type OAuth2ProviderType = "discord" | "github" | "google";
 export type SignInWithOAuth2Request = {
   /** OAuth2 provider to use */
   provider: OAuth2ProviderType;
-  redirect_to?: string;
+  redirectTo?: string;
 };
 
 export type SignInWithOAuth2Response = {
-  auth_url: string;
+  authUrl: string;
 };

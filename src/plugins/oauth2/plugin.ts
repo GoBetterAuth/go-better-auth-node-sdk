@@ -16,7 +16,7 @@ export class OAuth2Plugin implements Plugin {
       ): Promise<SignInWithOAuth2Response> => {
         return wrappedFetch(
           client,
-          `/oauth2/authorize/${data.provider}?redirect_to=${data.redirect_to}`,
+          `/oauth2/authorize/${data.provider}?redirect_to=${data.redirectTo}`,
           {
             method: "GET",
           },

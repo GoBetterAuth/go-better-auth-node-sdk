@@ -1,3 +1,5 @@
+import { toSnakeCaseKeys } from "es-toolkit";
+
 import { wrappedFetch } from "./fetch";
 import type {
   FetchContext,
@@ -26,20 +28,19 @@ export class GoBetterAuthClient {
       if ("attachCookies" in plugin && this.config.cookies) {
         (plugin as any).attachCookies(this.config.cookies);
       }
-
       (this as any)[plugin.id] = plugin.init(this);
     }
   }
 
-  public registerBeforeFetch(hook: BeforeFetchHook) {
+  public registerBeforeFetch(hook: BeforeFetchHook): void {
     this.beforeFetchHooks.push(hook);
   }
 
-  public registerAfterFetch(hook: AfterFetchHook) {
+  public registerAfterFetch(hook: AfterFetchHook): void {
     this.afterFetchHooks.push(hook);
   }
 
-  public async runBeforeFetch(ctx: FetchContext) {
+  public async runBeforeFetch(ctx: FetchContext): Promise<void> {
     for (const hook of this.beforeFetchHooks) {
       await hook(ctx);
     }
@@ -48,7 +49,9 @@ export class GoBetterAuthClient {
   public async runAfterFetch(ctx: FetchContext, res: Response) {
     for (const hook of this.afterFetchHooks) {
       const result = await hook(ctx, res);
-      if (result === "retry") return "retry";
+      if (result === "retry") {
+        return "retry";
+      }
     }
   }
 
@@ -61,9 +64,7 @@ export class GoBetterAuthClient {
   public async signOut(data: SignOutRequest): Promise<SignOutResponse> {
     return wrappedFetch<SignOutResponse>(this, "/sign-out", {
       method: "POST",
-      body: data.session_id
-        ? { session_id: data.session_id, sign_out_all: data.sign_out_all }
-        : {},
+      body: toSnakeCaseKeys(data),
     });
   }
 

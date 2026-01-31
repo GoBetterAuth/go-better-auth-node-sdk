@@ -26,12 +26,20 @@ export class BearerPlugin implements Plugin {
     });
 
     client.registerAfterFetch(async (ctx: FetchContext, res: Response) => {
-      if (typeof document === "undefined") return;
-      if (res.status !== 401) return;
-      if (ctx.meta.retry) return;
+      if (typeof document === "undefined") {
+        return;
+      }
+      if (res.status !== 401) {
+        return;
+      }
+      if (ctx.meta.retry) {
+        return;
+      }
 
       const refreshToken = localStorage.getItem("refreshToken");
-      if (!refreshToken) return;
+      if (!refreshToken) {
+        return;
+      }
 
       if (!client.jwt) {
         console.warn("JWT Plugin is required for Bearer token refresh.");
@@ -43,13 +51,14 @@ export class BearerPlugin implements Plugin {
         this.refreshPromise = (async () => {
           try {
             const response = await client.jwt.refreshToken({
-              refresh_token: refreshToken,
+              refreshToken: refreshToken,
             });
+            if (!response) {
+              return null;
+            }
 
-            if (!response) return null;
-
-            localStorage.setItem("accessToken", response.access_token);
-            localStorage.setItem("refreshToken", response.refresh_token);
+            localStorage.setItem("accessToken", response.accessToken);
+            localStorage.setItem("refreshToken", response.refreshToken);
 
             return response;
           } finally {
@@ -59,15 +68,16 @@ export class BearerPlugin implements Plugin {
       }
 
       const refreshed = await this.refreshPromise;
-      if (!refreshed) return;
+      if (!refreshed) {
+        return;
+      }
 
       const headerName = this.options?.headerName ?? "Authorization";
       ctx.init.headers = {
         ...ctx.init.headers,
-        [headerName]: `Bearer ${refreshed.access_token}`,
+        [headerName]: `Bearer ${refreshed.accessToken}`,
       };
 
-      ctx.meta.retry = true;
       return "retry";
     });
 

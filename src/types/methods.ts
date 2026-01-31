@@ -6,8 +6,8 @@ export type GetMeResponse = {
 };
 
 export type SignOutRequest = {
-  session_id?: string;
-  sign_out_all?: boolean;
+  sessionId?: string;
+  signOutAll?: boolean;
 };
 
 export type SignOutResponse = {
