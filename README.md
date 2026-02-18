@@ -72,6 +72,53 @@ const goBetterAuthClient = createClient({
 });
 ```
 
+## Core Client Methods
+
+The client provides built-in methods for essential authentication operations:
+
+### Get Current User
+
+Retrieve information about the currently authenticated user:
+
+```typescript
+const { user, session } = await goBetterAuthClient.getMe();
+
+console.log(user.email);
+console.log(session.id);
+```
+
+### Sign Out
+
+Sign out the current user or all sessions:
+
+```typescript
+// Sign out current session
+await goBetterAuthClient.signOut({});
+
+// Sign out all sessions
+await goBetterAuthClient.signOut({
+  signOutAll: true,
+});
+
+// Sign out a specific session
+await goBetterAuthClient.signOut({
+  sessionId: "session-id",
+});
+```
+
+### Get Plugin Instance
+
+Access a plugin instance programmatically:
+
+```typescript
+const emailPasswordPlugin = goBetterAuthClient.getPlugin("emailPassword");
+
+// Use the plugin
+if (emailPasswordPlugin) {
+  // Plugin methods are now available
+}
+```
+
 ## Available Plugins
 
 ### Email Password Plugin
@@ -91,28 +138,38 @@ await goBetterAuthClient.emailPassword.signUp({
   name: "John Doe",
   email: "john@example.com",
   password: "securePassword123",
+  callbackUrl: "http://localhost:3000/callback", // Optional callback URL
 });
 
 // Sign in
 const response = await goBetterAuthClient.emailPassword.signIn({
   email: "john@example.com",
   password: "securePassword123",
+  callbackUrl: "http://localhost:3000/callback", // Optional callback URL
 });
 
 // Send email verification
 await goBetterAuthClient.emailPassword.sendEmailVerification({
   email: "john@example.com",
+  callbackUrl: "http://localhost:3000/callback", // Optional callback URL
 });
 
 // Request password reset
 await goBetterAuthClient.emailPassword.requestPasswordReset({
   email: "john@example.com",
+  callbackUrl: "http://localhost:3000/callback", // Optional callback URL
 });
 
 // Change password
 await goBetterAuthClient.emailPassword.changePassword({
   token: "reset-token",
   password: "newSecurePassword123",
+});
+
+// Request email change
+await goBetterAuthClient.emailPassword.requestEmailChange({
+  email: "john.doe@example.com",
+  callbackUrl: "http://localhost:3000/callback", // Optional callback URL
 });
 ```
 
@@ -203,6 +260,37 @@ const goBetterAuthClient = createClient({
 // 3. Store tokens in localStorage (access_token and refresh_token)
 ```
 
+### Magic Link Plugin
+
+Provides flows for passwordless authentication.
+
+```typescript
+import { MagicLinkPlugin } from "go-better-auth/plugins";
+
+const goBetterAuthClient = createClient({
+  url: "http://localhost:8080",
+  plugins: [new MagicLinkPlugin()],
+});
+
+// Send magic link via email
+await goBetterAuthClient.magicLink.signIn({
+  email: "john.doe@example.com",
+  name: "John Doe", // Optional name
+  callbackUrl: "http://localhost:3000/callback", // Optional callback URL
+});
+
+// Verify magic link token
+await goBetterAuthClient.magicLink.verify({
+  token: "magic-link-token",
+  callbackUrl: "http://localhost:3000/callback", // Optional callback URL
+});
+
+// Exchange token from verify endpoint for session
+await goBetterAuthClient.magicLink.exchange({
+  token: "magic-link-token",
+});
+```
+
 ## Advanced Configuration
 
 ### Fetch Options
@@ -267,36 +355,6 @@ goBetterAuthClient.registerAfterFetch(async (ctx, response) => {
   cookies?: () => CookieStore
 }
 ```
-
-### Available Methods
-
-Once plugins are initialized, they expose methods on the client:
-
-## API Reference
-
-`EmailPassword Plugin`:
-
-| Method                                             | Description               |
-| -------------------------------------------------- | ------------------------- |
-| `client.emailPassword.signUp(data)`                | Create a new user account |
-| `client.emailPassword.signIn(data)`                | Authenticate a user       |
-| `client.emailPassword.sendEmailVerification(data)` | Send email verification   |
-| `client.emailPassword.requestPasswordReset(data)`  | Request password reset    |
-| `client.emailPassword.changePassword(data)`        | Change user password      |
-| `client.emailPassword.requestEmailChange(data)`    | Request email change      |
-
-`OAuth2 Plugin`:
-
-| Method                       | Description          |
-| ---------------------------- | -------------------- |
-| `client.oauth2.signIn(data)` | Initiate OAuth2 flow |
-
-`JWT Plugin`:
-
-| Method                          | Description        |
-| ------------------------------- | ------------------ |
-| `client.jwt.refreshToken(data)` | Refresh JWT tokens |
-| `client.jwt.getJWKSKeys()`      | Get JWKS keys      |
 
 ## Error Handling
 
