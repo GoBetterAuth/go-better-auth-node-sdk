@@ -8,3 +8,5 @@ export * from "./jwt/plugin";
 export * from "./jwt/types";
 export * from "./bearer/plugin";
 export * from "./bearer/types";
+export * from "./magic-link/plugin";
+export * from "./magic-link/types";
