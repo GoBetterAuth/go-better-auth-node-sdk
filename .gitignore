@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
 dist/
+.pnpm-store/
 *.log
 
 # Build output
