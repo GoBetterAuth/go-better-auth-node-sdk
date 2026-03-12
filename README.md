@@ -268,7 +268,7 @@ Provides flows for passwordless authentication.
 import { MagicLinkPlugin } from "go-better-auth/plugins";
 
 const goBetterAuthClient = createClient({
-  url: "http://localhost:8080",
+  url: "http://localhost:8080/auth",
   plugins: [new MagicLinkPlugin()],
 });
 
@@ -290,6 +290,100 @@ await goBetterAuthClient.magicLink.exchange({
   token: "magic-link-token",
 });
 ```
+
+### Admin Plugin
+
+Provides the ability to manage users, accounts, sessions, and impersonations.
+
+```typescript
+import { AdminPlugin } from "go-better-auth/plugins";
+
+const goBetterAuthClient = createClient({
+  url: "http://localhost:8080/auth",
+  plugins: [new AdminPlugin()],
+});
+```
+
+#### User Management
+
+```typescript
+await goBetterAuthClient.admin.createUser({
+  email: "user@example.com",
+  name: "John Doe",
+  // other fields...
+});
+
+const users = await goBetterAuthClient.admin.getAllUsers("100");
+
+const user = await goBetterAuthClient.admin.getUserById("user-id");
+
+await goBetterAuthClient.admin.updateUser("user-id", { name: "Jane" });
+
+await goBetterAuthClient.admin.deleteUser("user-id");
+```
+
+#### Account Management
+
+```typescript
+await goBetterAuthClient.admin.createAccount("user-id", { /* account data */ });
+
+await goBetterAuthClient.admin.getUserAccounts("user-id");
+
+await goBetterAuthClient.admin.getAccountById("account-id");
+
+await goBetterAuthClient.admin.updateAccount("account-id", { /* data */ });
+
+await goBetterAuthClient.admin.deleteAccount("account-id");
+```
+
+#### User State Management
+
+```typescript
+await goBetterAuthClient.admin.getUserState("user-id");
+
+await goBetterAuthClient.admin.createUserState("user-id", { /* state data */ });
+
+await goBetterAuthClient.admin.updateUserState("user-id", { /* state data */ });
+
+await goBetterAuthClient.admin.deleteUserState("user-id");
+
+await goBetterAuthClient.admin.getBannedUserStates();
+
+await goBetterAuthClient.admin.banUser("user-id", { reason: "reason..." });
+
+await goBetterAuthClient.admin.unbanUser("user-id");
+
+await goBetterAuthClient.admin.getUserAdminSessions("user-id");
+```
+
+#### Session State Management
+
+```typescript
+await goBetterAuthClient.admin.getSessionState("session-id");
+
+await goBetterAuthClient.admin.createSessionState("session-id", { /* data */ });
+
+await goBetterAuthClient.admin.updateSessionState("session-id", { /* data */ });
+
+await goBetterAuthClient.admin.deleteSessionState("session-id");
+
+await goBetterAuthClient.admin.getRevokedSessionStates();
+
+await goBetterAuthClient.admin.revokeSession("session-id", { reason: "reason..." });
+```
+
+#### Impersonations
+
+```typescript
+await goBetterAuthClient.admin.getAllImpersonations();
+
+await goBetterAuthClient.admin.getImpersonationById("impersonation-id");
+
+await goBetterAuthClient.admin.startImpersonation({ user_id: "user-id", /* data */ });
+
+await goBetterAuthClient.admin.stopImpersonation("impersonation-id");
+```
+
 
 ## Advanced Configuration
 
