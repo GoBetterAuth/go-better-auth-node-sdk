@@ -7,6 +7,13 @@
 This Node.js SDK provides seamless integration with an Authula server for both client-side and server-side applications and is framework agnostic.
 </p>
 
+
+<div align="center">
+  <a href="https://www.npmjs.com/package/authula" target="_parent">
+    <img src="https://img.shields.io/npm/dm/authula.svg" alt="Node.js SDK downloads" />
+  </a>
+</div>
+
 ---
 
 ## Features
