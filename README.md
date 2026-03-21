@@ -1,13 +1,10 @@
+
 <p align="center">
-Authula Node.js SDK
+<img src="./project-logo.png" width="200" />
 </p>
 
 <p align="center">
-<img src="./project-logo.png" width="100" />
-</p>
-
-<p align="center">
-This SDK provides seamless integration with a Authula server for both client-side and server-side applications and is framework agnostic.
+This Node.js SDK provides seamless integration with an Authula server for both client-side and server-side applications and is framework agnostic.
 </p>
 
 ---
@@ -66,8 +63,8 @@ const authulaClient = createClient({
   plugins: [
     new EmailPasswordPlugin(),
     new CSRFPlugin({
-      cookieName: "csrf_token",
-      headerName: "X-CSRF-TOKEN",
+      cookieName: "authula_csrf_token",
+      headerName: "X-AUTHULA-CSRF-TOKEN",
     }),
   ],
 });
