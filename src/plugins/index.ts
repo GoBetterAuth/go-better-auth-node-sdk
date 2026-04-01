@@ -1,5 +1,7 @@
 export * from "./admin/plugin";
 export * from "./admin/types";
+export * from "./access-control/plugin";
+export * from "./access-control/types";
 export * from "./bearer/plugin";
 export * from "./bearer/types";
 export * from "./csrf/plugin";
