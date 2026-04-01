@@ -143,7 +143,7 @@ const authulaClient = createClient({
 
 ```typescript
 // Create a new role
-await authulaClient.accessControl.createRole({
+const createdRole = await authulaClient.accessControl.createRole({
   name: "Admin",
   description: "Administrator role",
   isSystem: false,
@@ -152,24 +152,27 @@ await authulaClient.accessControl.createRole({
 // Get all roles
 const allRoles = await authulaClient.accessControl.getAllRoles();
 
+// Look up a role by name
+const roleByName = await authulaClient.accessControl.getRoleByName("Admin");
+
 // Get a specific role
-const role = await authulaClient.accessControl.getRoleById("role-id");
+const roleDetails = await authulaClient.accessControl.getRoleById("role-id");
 
 // Update a role
-await authulaClient.accessControl.updateRole("role-id", {
+const updatedRole = await authulaClient.accessControl.updateRole("role-id", {
   name: "Updated name",
   description: "Updated description",
 });
 
 // Delete a role
-await authulaClient.accessControl.deleteRole("role-id");
+const deleteRoleResult = await authulaClient.accessControl.deleteRole("role-id");
 ```
 
 #### Permission Management
 
 ```typescript
 // Create a new permission
-await authulaClient.accessControl.createPermission({
+const createdPermission = await authulaClient.accessControl.createPermission({
   key: "users.create",
   description: "Create new users",
   isSystem: false,
@@ -178,20 +181,23 @@ await authulaClient.accessControl.createPermission({
 // Get all permissions
 const allPermissions = await authulaClient.accessControl.getAllPermissions();
 
+// Get a specific permission
+const permission = await authulaClient.accessControl.getPermissionById("permission-id");
+
 // Update a permission
-await authulaClient.accessControl.updatePermission("permission-id", {
+const updatedPermission = await authulaClient.accessControl.updatePermission("permission-id", {
   description: "Updated permission description",
 });
 
 // Delete a permission
-await authulaClient.accessControl.deletePermission("permission-id");
+const deletePermissionResult = await authulaClient.accessControl.deletePermission("permission-id");
 ```
 
 #### Role-Permission Management
 
 ```typescript
 // Add a permission to a role
-await authulaClient.accessControl.addRolePermission("role-id", {
+const addPermissionResult = await authulaClient.accessControl.addRolePermission("role-id", {
   permissionId: "permission-id",
 });
 
@@ -201,12 +207,12 @@ const rolePermissions = await authulaClient.accessControl.getRolePermissions(
 );
 
 // Replace all permissions for a role
-await authulaClient.accessControl.replaceRolePermissions("role-id", {
+const replaceRolePermissionsResult = await authulaClient.accessControl.replaceRolePermissions("role-id", {
   permissionIds: ["permission-id-1", "permission-id-2", "permission-id-3"],
 });
 
 // Remove a permission from a role
-await authulaClient.accessControl.removeRolePermission(
+const removeRolePermissionResult = await authulaClient.accessControl.removeRolePermission(
   "role-id",
   "permission-id",
 );
@@ -219,25 +225,30 @@ await authulaClient.accessControl.removeRolePermission(
 const userRoles = await authulaClient.accessControl.getUserRoles("user-id");
 
 // Assign a role to a user
-await authulaClient.accessControl.assignUserRole("user-id", {
+const assignUserRoleResult = await authulaClient.accessControl.assignUserRole("user-id", {
   roleId: "role-id",
   expiresAt: new Date("2025-12-31"), // Optional: role expiration date
 });
 
 // Replace all roles for a user
-await authulaClient.accessControl.replaceUserRoles("user-id", {
+const replaceUserRolesResult = await authulaClient.accessControl.replaceUserRoles("user-id", {
   roleIds: ["role-id-1", "role-id-2"],
 });
 
 // Remove a role from a user
-await authulaClient.accessControl.removeUserRole("user-id", "role-id");
+const removeUserRoleResult = await authulaClient.accessControl.removeUserRole("user-id", "role-id");
 ```
 
 #### User Permission Management
 
 ```typescript
 // Get all effective permissions for a user (from all assigned roles)
-const userPermissions = await authulaClient.accessControl.getUserEffectivePermissions("user-id");
+const effectivePermissions = await authulaClient.accessControl.getUserPermissions("user-id");
+
+// Check whether the user has all requested permissions
+const permissionCheck = await authulaClient.accessControl.checkUserPermissions("user-id", {
+  permissionKeys: ["users.create", "users.update"],
+});
 ```
 
 ---

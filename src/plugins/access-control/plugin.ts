@@ -6,14 +6,19 @@ import type {
   AddRolePermissionResponse,
   AssignUserRoleRequest,
   AssignUserRoleResponse,
+  CheckUserPermissionsRequest,
+  CheckUserPermissionsResponse,
   CreatePermissionRequest,
   CreatePermissionResponse,
   CreateRoleRequest,
   CreateRoleResponse,
   DeletePermissionResponse,
   DeleteRoleResponse,
-  GetUserEffectivePermissionsResponse,
+  GetUserPermissionsResponse,
+  RoleDetails,
   Permission,
+  UserPermissionInfo,
+  UserRoleInfo,
   RemoveRolePermissionResponse,
   RemoveUserRoleResponse,
   ReplaceRolePermissionResponse,
@@ -25,7 +30,6 @@ import type {
   UpdatePermissionResponse,
   UpdateRoleRequest,
   UpdateRoleResponse,
-  UserWithRoles,
 } from "./types";
 
 export class AccessControlPlugin implements Plugin {
@@ -35,21 +39,30 @@ export class AccessControlPlugin implements Plugin {
 
   public init(client: AuthulaClient) {
     return {
-      // Role management
+      // Roles
       createRole: async (
         data: CreateRoleRequest,
       ): Promise<CreateRoleResponse> => {
-        return wrappedFetch(client, "/access-control/roles", {
+        return wrappedFetch(client, `/access-control/roles`, {
           method: "POST",
           body: data,
         });
       },
-      getAllRoles: async (): Promise<{ roles: Role[] }> => {
-        return wrappedFetch(client, "/access-control/roles", {
+      getAllRoles: async (): Promise<Role[]> => {
+        return wrappedFetch(client, `/access-control/roles`, {
           method: "GET",
         });
       },
-      getRoleById: async (roleId: string): Promise<{ role: Role }> => {
+      getRoleByName: async (roleName: string): Promise<Role> => {
+        return wrappedFetch(
+          client,
+          `/access-control/roles/by-name/${roleName}`,
+          {
+            method: "GET",
+          },
+        );
+      },
+      getRoleById: async (roleId: string): Promise<RoleDetails> => {
         return wrappedFetch(client, `/access-control/roles/${roleId}`, {
           method: "GET",
         });
@@ -69,19 +82,28 @@ export class AccessControlPlugin implements Plugin {
         });
       },
 
-      // Permission management
+      // Permissions
       createPermission: async (
         data: CreatePermissionRequest,
       ): Promise<CreatePermissionResponse> => {
-        return wrappedFetch(client, "/access-control/permissions", {
+        return wrappedFetch(client, `/access-control/permissions`, {
           method: "POST",
           body: data,
         });
       },
-      getAllPermissions: async (): Promise<{ permissions: Permission[] }> => {
-        return wrappedFetch(client, "/access-control/permissions", {
+      getAllPermissions: async (): Promise<Permission[]> => {
+        return wrappedFetch(client, `/access-control/permissions`, {
           method: "GET",
         });
+      },
+      getPermissionById: async (permissionId: string): Promise<Permission> => {
+        return wrappedFetch(
+          client,
+          `/access-control/permissions/${permissionId}`,
+          {
+            method: "GET",
+          },
+        );
       },
       updatePermission: async (
         permissionId: string,
@@ -108,7 +130,7 @@ export class AccessControlPlugin implements Plugin {
         );
       },
 
-      // Role-Permission management
+      // Role Permissions
       addRolePermission: async (
         roleId: string,
         data: AddRolePermissionRequest,
@@ -122,7 +144,9 @@ export class AccessControlPlugin implements Plugin {
           },
         );
       },
-      getRolePermissions: async (roleId: string): Promise<unknown> => {
+      getRolePermissions: async (
+        roleId: string,
+      ): Promise<UserPermissionInfo[]> => {
         return wrappedFetch(
           client,
           `/access-control/roles/${roleId}/permissions`,
@@ -157,8 +181,8 @@ export class AccessControlPlugin implements Plugin {
         );
       },
 
-      // User role management
-      getUserRoles: async (userId: string): Promise<UserWithRoles> => {
+      // User Roles
+      getUserRoles: async (userId: string): Promise<UserRoleInfo[]> => {
         return wrappedFetch(client, `/access-control/users/${userId}/roles`, {
           method: "GET",
         });
@@ -194,15 +218,28 @@ export class AccessControlPlugin implements Plugin {
         );
       },
 
-      // User permission management
-      getUserEffectivePermissions: async (
+      // User Permissions
+      getUserPermissions: async (
         userId: string,
-      ): Promise<GetUserEffectivePermissionsResponse> => {
+      ): Promise<GetUserPermissionsResponse> => {
         return wrappedFetch(
           client,
           `/access-control/users/${userId}/permissions`,
           {
             method: "GET",
+          },
+        );
+      },
+      checkUserPermissions: async (
+        userId: string,
+        data: CheckUserPermissionsRequest,
+      ): Promise<CheckUserPermissionsResponse> => {
+        return wrappedFetch(
+          client,
+          `/access-control/users/${userId}/permissions/check`,
+          {
+            method: "POST",
+            body: data,
           },
         );
       },

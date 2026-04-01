@@ -2,10 +2,6 @@ import { z } from "zod";
 
 import type { User } from "@/types";
 
-// ------------------------------
-// SCHEMAS
-// ------------------------------
-
 export const roleSchema = z.object({
   id: z.string().nonempty(),
   name: z.string().nonempty(),
@@ -26,28 +22,53 @@ export const permissionSchema = z.object({
 });
 export type Permission = z.infer<typeof permissionSchema>;
 
-export const rolePermissionSchema = z.object({
+export const permissionGrantSourceSchema = z.object({
   roleId: z.string().nonempty(),
-  permissionId: z.string().nonempty(),
+  roleName: z.string().nonempty(),
   grantedByUserId: z.string().nullish(),
-  grantedAt: z.iso.datetime(),
+  grantedAt: z.iso.datetime().nullish(),
 });
-export type RolePermission = z.infer<typeof rolePermissionSchema>;
+export type PermissionGrantSource = z.infer<typeof permissionGrantSourceSchema>;
 
-export const userRoleSchema = z.object({
-  userId: z.string().nonempty(),
+export const userPermissionInfoSchema = z.object({
+  permissionId: z.string().nonempty(),
+  permissionKey: z.string().nonempty(),
+  permissionDescription: z.string().nullish(),
+  grantedByUserId: z.string().nullish(),
+  grantedAt: z.iso.datetime().nullish(),
+  sources: z.array(permissionGrantSourceSchema).optional(),
+});
+export type UserPermissionInfo = z.infer<typeof userPermissionInfoSchema>;
+
+export const userRoleInfoSchema = z.object({
   roleId: z.string().nonempty(),
+  roleName: z.string().nonempty(),
+  roleDescription: z.string().nullish(),
   assignedByUserId: z.string().nullish(),
-  assignedAt: z.iso.datetime(),
+  assignedAt: z.iso.datetime().nullish(),
   expiresAt: z.iso.datetime().nullish(),
 });
-export type UserRole = z.infer<typeof userRoleSchema>;
+export type UserRoleInfo = z.infer<typeof userRoleInfoSchema>;
 
-// ------------------------------
-// API response types
-// ------------------------------
+export const roleDetailsSchema = z.object({
+  role: roleSchema,
+  permissions: z.array(userPermissionInfoSchema),
+});
+export type RoleDetails = z.infer<typeof roleDetailsSchema>;
 
-// Role management
+export const getUserPermissionsResponseSchema = z.object({
+  permissions: z.array(userPermissionInfoSchema),
+});
+export type GetUserPermissionsResponse = z.infer<
+  typeof getUserPermissionsResponseSchema
+>;
+
+export const checkUserPermissionsResponseSchema = z.object({
+  hasPermissions: z.boolean(),
+});
+export type CheckUserPermissionsResponse = z.infer<
+  typeof checkUserPermissionsResponseSchema
+>;
 
 export type CreateRoleRequest = {
   name: string;
@@ -60,7 +81,7 @@ export type CreateRoleResponse = {
 };
 
 export type UpdateRoleRequest = {
-  name?: string;
+  name?: string | null;
   description?: string | null;
 };
 
@@ -71,8 +92,6 @@ export type UpdateRoleResponse = {
 export type DeleteRoleResponse = {
   message: string;
 };
-
-// Permission management
 
 export type CreatePermissionRequest = {
   key: string;
@@ -96,8 +115,6 @@ export type DeletePermissionResponse = {
   message: string;
 };
 
-// Role-Permission management
-
 export type AddRolePermissionRequest = {
   permissionId: string;
 };
@@ -118,15 +135,9 @@ export type RemoveRolePermissionResponse = {
   message: string;
 };
 
-// User-Role management
-
 export type AssignUserRoleRequest = {
   roleId: string;
   expiresAt?: string | null;
-};
-
-export type AssignUserRoleResponse = {
-  message: string;
 };
 
 export type ReplaceUserRolesRequest = {
@@ -137,44 +148,16 @@ export type ReplaceUserRolesResponse = {
   message: string;
 };
 
+export type AssignUserRoleResponse = {
+  message: string;
+};
+
 export type RemoveUserRoleResponse = {
   message: string;
 };
 
-// User-Permission management
-
-export type GetUserEffectivePermissionsResponse = {
-  permissions: UserPermissionInfo[];
-};
-
-export type UserRoleInfo = {
-  roleId: string;
-  roleName: string;
-  roleDescription?: string | null;
-  assignedByUserId?: string | null;
-  assignedAt?: string | null;
-  expiresAt?: string | null;
-};
-
-export type PermissionGrantSource = {
-  roleId: string;
-  roleName: string;
-  grantedByUserId?: string | null;
-  grantedAt?: string | null;
-};
-
-export type UserPermissionInfo = {
-  permissionId: string;
-  permissionKey: string;
-  permissionDescription?: string | null;
-  grantedByUserId?: string | null;
-  grantedAt?: string | null;
-  sources?: PermissionGrantSource[];
-};
-
-export type UserWithRoles = {
-  user: User;
-  roles: UserRoleInfo[];
+export type CheckUserPermissionsRequest = {
+  permissionKeys: string[];
 };
 
 export type UserWithPermissions = {
@@ -188,7 +171,7 @@ export type UserAuthorizationProfile = {
   permissions: UserPermissionInfo[];
 };
 
-export type RoleDetails = {
-  role: Role;
-  permissions: UserPermissionInfo[];
+export type UserWithRoles = {
+  user: User;
+  roles: UserRoleInfo[];
 };
