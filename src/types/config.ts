@@ -3,6 +3,10 @@ import type { Plugin } from "./plugins";
 
 export type FetchOptions = {
   /**
+   * Additional headers to include in every request made by the client
+   */
+  headers?: Record<string, string>;
+  /**
    * The abort timeout in seconds
    */
   abortTimeout?: number;
