@@ -8,7 +8,11 @@ export async function wrappedFetch<T>(
   endpoint: string,
   options: FetchRequestOptions = {},
 ): Promise<T> {
-  const headers = new Headers(options.headers || {});
+  const headersCombined = {
+    ...options.headers,
+    ...(client.config.fetchOptions?.headers ?? {}),
+  };
+  const headers = new Headers(headersCombined || {});
 
   let cookieStore: CookieStore | null = null;
 
