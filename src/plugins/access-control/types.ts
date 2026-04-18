@@ -75,7 +75,7 @@ export type CreateRoleRequest = {
   name: string;
   description?: string | null;
   weight?: number;
-  isSystem: boolean;
+  isSystem?: boolean;
 };
 
 export type CreateRoleResponse = {
@@ -99,7 +99,7 @@ export type DeleteRoleResponse = {
 export type CreatePermissionRequest = {
   key: string;
   description?: string | null;
-  isSystem: boolean;
+  isSystem?: boolean;
 };
 
 export type CreatePermissionResponse = {
