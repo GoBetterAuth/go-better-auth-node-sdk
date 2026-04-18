@@ -6,6 +6,7 @@ export const roleSchema = z.object({
   id: z.string().nonempty(),
   name: z.string().nonempty(),
   description: z.string().nullish(),
+  weight: z.number(),
   isSystem: z.boolean(),
   createdAt: z.iso.datetime(),
   updatedAt: z.iso.datetime(),
@@ -73,6 +74,7 @@ export type CheckUserPermissionsResponse = z.infer<
 export type CreateRoleRequest = {
   name: string;
   description?: string | null;
+  weight?: number;
   isSystem: boolean;
 };
 
@@ -83,6 +85,7 @@ export type CreateRoleResponse = {
 export type UpdateRoleRequest = {
   name?: string | null;
   description?: string | null;
+  weight?: number;
 };
 
 export type UpdateRoleResponse = {
