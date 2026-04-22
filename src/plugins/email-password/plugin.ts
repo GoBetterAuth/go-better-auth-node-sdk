@@ -16,13 +16,13 @@ export class EmailPasswordPlugin implements Plugin {
   public init(client: AuthulaClient) {
     return {
       signUp: async <T>(data: SignUpRequest): Promise<T> => {
-        return wrappedFetch<T>(client, "/sign-up", {
+        return wrappedFetch<T>(client, "/email-password/sign-up", {
           method: "POST",
           body: data,
         });
       },
       signIn: async <T>(data: SignInRequest): Promise<T> => {
-        return wrappedFetch<T>(client, "/sign-in", {
+        return wrappedFetch<T>(client, "/email-password/sign-in", {
           method: "POST",
           body: data,
         });
@@ -30,7 +30,7 @@ export class EmailPasswordPlugin implements Plugin {
       sendEmailVerification: async (
         data: SendEmailVerificationRequest,
       ): Promise<void> => {
-        return wrappedFetch(client, `/send-email-verification`, {
+        return wrappedFetch(client, `/email-password/send-email-verification`, {
           method: "POST",
           body: data,
         });
@@ -38,13 +38,13 @@ export class EmailPasswordPlugin implements Plugin {
       requestPasswordReset: async (
         data: RequestPasswordResetRequest,
       ): Promise<void> => {
-        return wrappedFetch(client, `/request-password-reset`, {
+        return wrappedFetch(client, `/email-password/request-password-reset`, {
           method: "POST",
           body: data,
         });
       },
       changePassword: async (data: ChangePasswordRequest): Promise<void> => {
-        return wrappedFetch(client, `/change-password`, {
+        return wrappedFetch(client, `/email-password/change-password`, {
           method: "POST",
           body: data,
         });
@@ -52,7 +52,7 @@ export class EmailPasswordPlugin implements Plugin {
       requestEmailChange: async (
         data: RequestEmailChangeRequest,
       ): Promise<void> => {
-        return wrappedFetch(client, `/request-email-change`, {
+        return wrappedFetch(client, `/email-password/request-email-change`, {
           method: "POST",
           body: data,
         });
