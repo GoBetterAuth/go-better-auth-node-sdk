@@ -584,7 +584,6 @@ const response = await authulaClient.emailPassword.signIn({
 
 // Send email verification
 await authulaClient.emailPassword.sendEmailVerification({
-  email: "john@example.com",
   callbackUrl: "http://localhost:3000/callback", // Optional callback URL
 });
 
