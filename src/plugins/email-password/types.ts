@@ -17,7 +17,6 @@ export type VerifyEmailRequest = {
 };
 
 export type SendEmailVerificationRequest = {
-  email: string;
   callbackUrl?: string;
 };
 
